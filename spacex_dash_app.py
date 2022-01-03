@@ -82,7 +82,8 @@ def get_pie_chart(entered_site):
         # return the outcomes piechart for a selected site
         filtered_df=spacex_df[spacex_df['Launch Site']==entered_site]
         df1=filtered_df.groupby(['Launch Site','class']).size().reset_index(name='class count')
-        fig=px.pie(df1,values='class count',names='class',title='Success count for{entered_site}')
+        title_pie = f'Success count for {entered_site}'
+        fig=px.pie(df1,values='class count',names='class',title=title_pie)
         return fig
 
 # TASK 4:
@@ -98,12 +99,19 @@ def get_scatter(entered_site, slider_range):
     dropdown_scatter=spacex_df[slide]
 
     if entered_site == 'ALL':
-        fig = px.scatter(spacex_df,x=dropdown_scatter, y='class',title='Success by Payload Size and Class (All Sites)', color='Booster Version Category')
+        fig = px.scatter(
+            dropdown_scatter, x='Payload Mass (kg)', y='class',
+            hover_data=['Booster Version'],
+            color='Booster Version Category',
+            title='Correlation between Payload and Success for all Sites')
         return fig
     else:
-        df1 = spacex_df.groupby(['Launch Site','class']).size().reset_index(name='class count')
-        title_scatter = f'Success by Payload Size and Class {entered_site}'
-        fig=px.scatter(df1,x=dropdown_scatter, y='class', title = title_scatter, color='Booster Version Category')
+        dropdown_scatter = dropdown_scatter[spacex_df['Launch Site'] == entered_site]
+        title_scatter = f'Success by Payload Size for {entered_site}'
+        fig=px.scatter(
+            dropdown_scatter,x='Payload Mass (kg)', y='class', 
+            title = title_scatter, 
+            color='Booster Version Category')
         return fig
 # Run the app
 if __name__ == '__main__':
